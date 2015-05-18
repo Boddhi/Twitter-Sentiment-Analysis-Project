@@ -19,7 +19,7 @@ public class Tester {
 			myPop.feed("Training Data");
 		}
 		
-		int ans,change;
+		int ans,change = 0;
 		
 		for(int i = 0; i < 500; i++){
 			String line = s.nextLine();
@@ -39,8 +39,10 @@ public class Tester {
 				myPop.getFittest(0).feed(line, change);
 			}
 			else{
-				change = ans>0?1:-1;
+				if(ans !=0)change = ans>0?1:-1;
+				else change = 0;
 				myPop.getFittest(0).feed(line, change);
+				
 			}
 		}
 		
