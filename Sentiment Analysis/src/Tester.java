@@ -16,9 +16,8 @@ public class Tester {
 		if(!load) myPop = new Population(50,true);
 		else{
 			myPop = new Population("New Save File");
+			myPop.feed("Training Data");
 		}
-		
-		myPop.feed("Training Data");
 		
 		int ans,change;
 		
