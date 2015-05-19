@@ -13,10 +13,12 @@ public class Tester {
 		//ant1.generateIndividual("Hello world! Goodbye world.");
 		//System.out.println(ant1.toString());
 		Population myPop;
-		if(!load) myPop = new Population(50,true);
+		if(!load) {
+			myPop = new Population(50,true);
+			myPop.feed("Training Data");
+		}
 		else{
 			myPop = new Population("New Save File");
-			myPop.feed("Training Data");
 		}
 		
 		int ans,change = 0;
@@ -28,7 +30,7 @@ public class Tester {
 			ans = myPop.getFittest(0).test(line);
 			if(ans > 0) System.out.println("Positive");
 			else if(ans < 0) System.out.println("Negative");
-			else System.out.println("Not Sure");
+			else System.out.println("Neutral");
 			System.out.println("Correct? (Y/N)");
 			String response = s.nextLine();
 			if(response.toLowerCase().equals("n")){
@@ -47,30 +49,6 @@ public class Tester {
 		}
 		
 		if(save) myPop.saveToFile("New Save File");
-		
-		/*
-		FitnessCalc.setSolution("11000000000010000111010101010000010011001000000000000000");
-		Population myPop;
-		if(!load) myPop = new Population(50,true);
-		else{
-			myPop = new Population("Save File");
-		}
-		
-		int generationCount = 0; 
-		
-		while(myPop.getFittest().getFitness() < FitnessCalc.getMaxFitness()){ 
-		  generationCount++; 
-		  System.out.println("Generation: "+generationCount+" Fittest: "+myPop.getFittest().getFitness()); 
-		  myPop = Algorithm.evolvePopulation(myPop); 
-		} 
-		
-		if(save) myPop.saveToFile("Save File");
-		
-		System.out.println("Solution found!"); 
-		System.out.println("Generation: "+generationCount); 
-		System.out.println("Genes:"); 
-		System.out.println(myPop.getFittest());
-		*/
 	}
 
 }
