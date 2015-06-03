@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+import res.CardLayoutDemo;
+
 
 
 public class Tester {
@@ -12,8 +14,11 @@ public class Tester {
 		//Individual ant1 = new Individual();
 		//ant1.generateIndividual("Hello world! Goodbye world.");
 		//System.out.println(ant1.toString());
-		Display window = new Display(null);
-		window.createContentPane();
+		//Display window = new Display(null);
+		//window.createContentPane();
+		
+		CardLayoutDemo card = new CardLayoutDemo();
+		card.createAndShowGUI();
 		
 		Population myPop;
 		if(!load) {

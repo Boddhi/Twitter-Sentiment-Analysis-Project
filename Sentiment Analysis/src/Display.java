@@ -64,70 +64,8 @@ public class Display {
 		qButton = new ImageIcon("UI/qbutton.png");
 	}
 
-	/**
-	 * Generates the Main Menu (and clears any other display)
-	 */
-	public JPanel createContentPane() {
-		window.setVisible(false);
-		window.getContentPane().removeAll();
-		//window.setLayout(null);
-
-		ImagePanel imgPanel = new ImagePanel("UI/MenuMockup.png");
-
-		JPanel contentPane = new JPanel();
-		JPanel buttonsPane = new JPanel();
+	public void createContentPane() {
 		
-		//imgPanel.setLayout(null);
-		//contentPane.setLayout(null);
-		
-		contentPane.setLayout(new OverlayLayout(contentPane));
-		
-
-		JButton startButton = new JButton();
-		JButton quitButton = new JButton();		
-		JTextField textField = new JTextField(20);
-		
-		
-		startButton.setIcon(sButton);
-		startButton.setBorder(null);
-		startButton.addActionListener(l);
-		startButton.setActionCommand("start");
-		//startButton.setLocation(458, 620);
-		//startButton.setLocation(50, 50);
-		
-		quitButton.setIcon(qButton);
-		quitButton.setBorder(null);		
-		quitButton.addActionListener(l);
-		quitButton.setActionCommand("quit");
-		
-		buttonsPane.setLayout(new BoxLayout(buttonsPane, BoxLayout.X_AXIS));
-		buttonsPane.add(Box.createRigidArea(new Dimension(0, 0)));
-		buttonsPane.add(startButton);
-		
-		
-		
-		
-		
-		contentPane.add(textField);
-		contentPane.add(startButton);
-		//contentPane.add(buttonsPane);
-		//contentPane.add(startButton);
-		contentPane.add(imgPanel);
-		
-		
-		//window.add(startButton);
-		//window.add(imgPanel);
-		
-		window.setContentPane(contentPane);
-		//window.paint(null);
-		window.setVisible(true);
-		return contentPane;
 	}
 
-	/**
-	 * Removes the game pane
-	 */
-	public void menuStart() {
-		window.getGraphics().dispose();
-	}
 }
