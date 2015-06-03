@@ -12,6 +12,9 @@ public class Tester {
 		//Individual ant1 = new Individual();
 		//ant1.generateIndividual("Hello world! Goodbye world.");
 		//System.out.println(ant1.toString());
+		Display window = new Display(null);
+		window.createContentPane();
+		
 		Population myPop;
 		if(!load) {
 			myPop = new Population(50,true);
