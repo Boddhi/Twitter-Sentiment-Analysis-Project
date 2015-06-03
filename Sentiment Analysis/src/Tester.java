@@ -1,8 +1,8 @@
 import java.util.Scanner;
 
-import res.CardLayoutDemo;
+import res.*;
 
-
+import main.*;
 
 public class Tester {
 
@@ -17,10 +17,11 @@ public class Tester {
 		//Display window = new Display(null);
 		//window.createContentPane();
 		
-		CardLayoutDemo card = new CardLayoutDemo();
-		card.createAndShowGUI();
+		TwitterFeed twitter = new TwitterFeed();		
+		
 		
 		Population myPop;
+		
 		if(!load) {
 			myPop = new Population(50,true);
 			myPop.feed("Training Data");
@@ -28,6 +29,9 @@ public class Tester {
 		else{
 			myPop = new Population("New Save File");
 		}
+		
+		CardLayoutDemo card = new CardLayoutDemo(twitter,myPop);
+		card.createAndShowGUI();
 		
 		int ans,change = 0;
 		
@@ -58,5 +62,7 @@ public class Tester {
 		
 		if(save) myPop.saveToFile("New Save File");
 	}
+	
+	
 
 }
