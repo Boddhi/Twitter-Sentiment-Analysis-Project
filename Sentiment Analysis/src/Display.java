@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.OverlayLayout;
 import java.net.URL;
 
@@ -84,6 +85,8 @@ public class Display {
 
 		JButton startButton = new JButton();
 		JButton quitButton = new JButton();		
+		JTextField textField = new JTextField(20);
+		
 		
 		startButton.setIcon(sButton);
 		startButton.setBorder(null);
@@ -105,7 +108,7 @@ public class Display {
 		
 		
 		
-		
+		contentPane.add(textField);
 		contentPane.add(startButton);
 		//contentPane.add(buttonsPane);
 		//contentPane.add(startButton);

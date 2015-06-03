@@ -1,3 +1,5 @@
+package res;
+
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import javax.swing.Box;
@@ -7,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.OverlayLayout;
 import java.net.URL;
 
@@ -15,8 +18,11 @@ import res.ImagePanel;
 import res.KeyboardListener;
 
 /**
-
+ * Main graphics class for Trash Smash, generates window, starts render thread,
+ * creates main menu
  * 
+ * @author Ben Pinhorn
+ * @author Brian Chen
  * @author Tristan Monger
  */
 
@@ -81,6 +87,8 @@ public class Display2 {
 
 		JButton startButton = new JButton();
 		JButton quitButton = new JButton();		
+		JTextField textField = new JTextField(20);
+		
 		
 		startButton.setIcon(sButton);
 		startButton.setBorder(null);
@@ -102,7 +110,7 @@ public class Display2 {
 		
 		
 		
-		
+		contentPane.add(textField);
 		contentPane.add(startButton);
 		//contentPane.add(buttonsPane);
 		//contentPane.add(startButton);
@@ -125,3 +133,4 @@ public class Display2 {
 		window.getGraphics().dispose();
 	}
 }
+
