@@ -43,7 +43,7 @@ import main.Population;
 import java.beans.*;
 import java.util.Random;
  
-public class ProgressBarDemo extends JPanel
+public class DataMiner extends JPanel
                              implements ActionListener, 
                                         PropertyChangeListener {
  
@@ -59,6 +59,9 @@ public class ProgressBarDemo extends JPanel
     public Boolean running = false;
     private JTextArea taskOutput;
     private Task task;
+    public static JTextField response = new JTextField();
+    
+    
     
     Boolean queried = false;
     Boolean calculated = false;
@@ -83,19 +86,19 @@ public class ProgressBarDemo extends JPanel
                 try {
                     Thread.sleep(random.nextInt(500));
                 } catch (InterruptedException ignore) {}
-                /*if(progress > 50 && !queried){
-                	
-                }*/
+                if(progress > 50 && !queried){
+                	results = twitter2.seek(GraphicsControl.input.getText());
+                	queried = true;
+                }
                 
                 if(progress > 75 && !calculated){
-                	results = twitter2.seek(CardLayoutDemo.input.getText());
-                	queried = true;
-                	
                 	for(int i = 0; i < results.length; i++){
-                		if(myPop2.getFittest(0).test(results[i]) == 1) good++;
-                		else if(myPop2.getFittest(0).test(results[i]) == -1) bad++;
+                		//System.out.println(results[i]);
+                		if(myPop2.getFittest(0).test(results[i]) > 0) good++;
+                		else if(myPop2.getFittest(0).test(results[i]) < 0) bad++;
                 		else neutral++;
                 	}
+                	calculated = true;
                 }
                 
                 //Make random progress.
@@ -103,7 +106,29 @@ public class ProgressBarDemo extends JPanel
                 setProgress(Math.min(progress, 100));
             }
             
+            String output = "";
+            if(good > bad){
+            	output+= "POSITIVE";
+        		//if(good > bad+neutral) output+=" : MAJORITY";
+        		//else output+=" : MINORITY ";
+        		response.setForeground(Color.GREEN);
+        	}
+        	else if(bad > good){
+        		output+="NEGATIVE";
+        		//if(good > bad+neutral) output+=" : MAJORITY";
+        		//else output+=" : MINORITY ";
+        		response.setForeground(Color.RED);
+        	}
+        	else{
+        		output+="NEUTRAL";
+        		response.setForeground(Color.BLACK);
+        	}
+            System.out.println(good + " " + bad + " " + neutral);
+            response.setText(output);
+            response.setVisible(true);
+            
             queried = false;
+            calculated = false;
             return null;
         }
  
@@ -120,9 +145,12 @@ public class ProgressBarDemo extends JPanel
         }
     }
  
-    public ProgressBarDemo(JButton backButton, TwitterFeed twitter2, Population pop) {
+    public DataMiner(JButton backButton, TwitterFeed t, Population pop) {
         super(new BorderLayout());
  
+        twitter2 = t;
+        myPop2 = pop;
+        
         //Create the demo's UI.
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
@@ -135,11 +163,16 @@ public class ProgressBarDemo extends JPanel
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
         taskOutput.setEditable(false);
+        
+        response.setText("Unkown...");
+        response.setVisible(true);
+        response.setEditable(false);
  
         JPanel panel = new JPanel();
         panel.add(startButton);
         panel.add(backButton);
         panel.add(progressBar);
+        panel.add(response);
  
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.CENTER);
@@ -152,6 +185,7 @@ public class ProgressBarDemo extends JPanel
      */
     public void actionPerformed(ActionEvent e) {
     	if(e.getActionCommand() == "start"){
+    		taskOutput.setText("");
     		startButton.setEnabled(false);
     		running = true;
         	//backButton.setEnabled(false);
@@ -161,21 +195,8 @@ public class ProgressBarDemo extends JPanel
         	task = new Task();
         	task.addPropertyChangeListener(this);
         	task.execute();
-        	
-        	if(good > bad){
-        		System.out.print("POSITIVE: ");
-        		if(good > bad+neutral) System.out.println(" MAJORITY");
-        		else System.out.println(" MINORITY ");
-        	}
-        	else if(bad > good){
-        		System.out.print("NEGATIVE: ");
-        		if(good > bad+neutral) System.out.println(" MAJORITY");
-        		else System.out.println(" MINORITY ");
-        	}
-        	else{
-        		System.out.println("NEUTRAL");
-        		System.out.println(good + " " + bad + " " + neutral);
-        	}
+        	this.repaint();
+        	this.revalidate();
     	}
     }
  
@@ -187,7 +208,7 @@ public class ProgressBarDemo extends JPanel
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);
             taskOutput.append(String.format(
-                    "Completed %d%% of task.\n", task.getProgress()));
+                    "Twitter Analysis in progress... %d%% done\n", task.getProgress()));
         } 
     }
  
@@ -202,7 +223,7 @@ public class ProgressBarDemo extends JPanel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //Create and set up the content pane.
-        JComponent newContentPane = new ProgressBarDemo(null, twitter2, myPop2);
+        JComponent newContentPane = new DataMiner(null, twitter2, myPop2);
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
  

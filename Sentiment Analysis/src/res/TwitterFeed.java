@@ -30,7 +30,7 @@ public class TwitterFeed {
 	/**
 	 * Initializes twitter capabilities.
 	 */
-	public static void initTwitter(){
+	public void initTwitter(){
 		cb.setDebugEnabled(true)
 		.setOAuthConsumerKey("nQZ4c9w1beTSPR4fT7HaJ1hGN")
 		.setOAuthConsumerSecret(
@@ -39,7 +39,7 @@ public class TwitterFeed {
 				"3192494632-s3SRp7ZEKLjbgJE3c5eYap8TUyxEOy4mHRFMdJO")
 		.setOAuthAccessTokenSecret(
 				"6mODPqDKXvOtvSrNNYbaQFGN3MSKR3cmCVAElAI9ZUSZp");
-		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+		twitter = new TwitterFactory(cb.build()).getInstance();
 	}
 	
 	
@@ -57,6 +57,7 @@ public class TwitterFeed {
 				QueryResult result = twitter.search(query);
 				tweets.addAll(result.getTweets());
 				System.out.println("Gathered " + tweets.size() + " tweets");
+				if(tweets.size() == 0) break;
 				for (Status t : tweets)
 					if (t.getId() < lastID)
 						lastID = t.getId();

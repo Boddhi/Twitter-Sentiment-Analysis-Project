@@ -24,7 +24,7 @@ import res.KeyboardListener;
  * @author Tristan Monger
  */
 
-public class Display {
+public class OldDisplay {
 
 	// Window variables
 	public JFrame window = new JFrame("Trash Smash");
@@ -44,7 +44,7 @@ public class Display {
 	 * 
 	 * @param k
 	 */
-	public Display(KeyboardListener k) {
+	public OldDisplay(KeyboardListener k) {
 		l = new ButtonListener();
 		kl = k;
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

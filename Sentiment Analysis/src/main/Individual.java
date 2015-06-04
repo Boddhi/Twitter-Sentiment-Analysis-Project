@@ -57,7 +57,7 @@ public class Individual {
 
 	public void feed(String input, int value) {
 		String line = new String(input);
-		String[] words = line.split("\\s+");
+		String[] words = line.toLowerCase().split("\\s+");
 		for (int j = 0; j < words.length; j++) {
 			if (getGene(words[j]) != 0) {
 				setGene(words[j],getGene(words[j]) + value);

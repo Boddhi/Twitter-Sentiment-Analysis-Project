@@ -30,8 +30,8 @@ public class Tester {
 			myPop = new Population("New Save File");
 		}
 		
-		CardLayoutDemo card = new CardLayoutDemo(twitter,myPop);
-		card.createAndShowGUI();
+		GraphicsControl display = new GraphicsControl(twitter,myPop);
+		display.createAndShowGUI();
 		
 		int ans,change = 0;
 		
