@@ -242,10 +242,11 @@ public class GraphicsControl implements  ActionListener {
 			CardLayout cl = (CardLayout)(cards.getLayout());
 	        cl.show(cards, TRAINPANEL);
 	        sampleInput.setText("Enter a word or phrase...");
+	        testResult.setVisible(false);
 		}
 		else if(e.getActionCommand() == "back3"){
 			CardLayout cl = (CardLayout)(cards.getLayout());
-			myPop.saveToFile("Save File");
+			myPop.saveToFile(".\\Text Files\\Save File.txt");
 			outputText.setVisible(false);
 	        cl.show(cards, STARTPANEL);
 		}

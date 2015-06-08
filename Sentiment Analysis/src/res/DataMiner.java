@@ -8,7 +8,6 @@ import javax.swing.*;
 import genetics.*;
 
 import java.beans.*;
-import java.util.Scanner;
 
 /**
  * The DataMiner class. Responsible for performing calculations and analyzing data.
@@ -17,8 +16,7 @@ import java.util.Scanner;
  * 
  */
 @SuppressWarnings("serial")
-public class DataMiner extends JPanel implements ActionListener,
-		PropertyChangeListener {
+public class DataMiner extends JPanel implements ActionListener, PropertyChangeListener {
 
 	public static TwitterFeed twitter2;
 	public static Population myPop2;

@@ -11,7 +11,7 @@ Sarcasm detection is a notable weakness.
 
 Training Instructions:
 The program can be trained from within the GUI (at the "Train" page). However, if larger quantities of data are desired to be inputted, training by file is also possible.
-Simply create an "Update.txt" file of the following format and save it in the same folder as the program file.
+Simply create an "Update.txt" file of the following format and save it in the "Text Files" folder in the same directory as the jar file.
 
 Sample Update.txt - integer n, followed by n positive lines, then integer m, followed by m negative lines
 2
@@ -24,3 +24,4 @@ terrible
 Notes:
 * With great power comes great responsibility: if you want accurate output, give accurate training input.
 * The Twitter API limits the amount of queries that can be made per minute by a program. If the analysis will not change from neutral, just wait a minute or two.
+* Keep the jar file in the same directory as a Text Files folder, otherwise the data will not be accessed by the program.

@@ -33,14 +33,11 @@ public class Population {
 	 * @param filePath
 	 */
 	public Population(String filePath) {
-		File file = new File(filePath);
-		FileReader fw;
 		try {
-			fw = new FileReader(file.getAbsoluteFile());
-			BufferedReader bw = new BufferedReader(fw);
-			individuals = new Individual[Integer.parseInt(bw.readLine())];
+			BufferedReader br = new BufferedReader(new FileReader(filePath));
+			individuals = new Individual[Integer.parseInt(br.readLine())];
 			for (int i = 0; i < getSize(); i++) {
-				String line = new String(bw.readLine());
+				String line = new String(br.readLine());
 				String[] words = line.split("[^a-zA-Z0-9']");
 				Individual newGuy = new Individual();
 				for (int j = 0; j < words.length; j += 3) {
@@ -48,10 +45,10 @@ public class Population {
 				}
 				saveIndividual(i, newGuy);
 			}
-			bw.close();
+			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 
 	/**
@@ -59,15 +56,12 @@ public class Population {
 	 * @param filePath
 	 */
 	public void feed(String filePath) {
-		File file = new File(filePath);
-		FileReader fw;
 		int len;
 		try {
-			fw = new FileReader(file.getAbsoluteFile());
-			BufferedReader bw = new BufferedReader(fw);
-			len = Integer.parseInt(bw.readLine());
+			BufferedReader br = new BufferedReader(new FileReader(filePath));
+			len = Integer.parseInt(br.readLine());
 			for (int i = 0; i < len; i++) {
-				String line = new String(bw.readLine());
+				String line = new String(br.readLine());
 				String[] words = line.toLowerCase().split("[^a-zA-Z0-9']");
 				for (int j = 0; j < words.length; j++) {
 					for (int k = 0; k < individuals.length; k++) {
@@ -75,9 +69,9 @@ public class Population {
 					}
 				}
 			}
-			len = Integer.parseInt(bw.readLine());
+			len = Integer.parseInt(br.readLine());
 			for (int i = 0; i < len; i++) {
-				String line = new String(bw.readLine());
+				String line = new String(br.readLine());
 				String[] words = line.toLowerCase().split("[^a-zA-Z0-9']");
 				for (int j = 0; j < words.length; j++) {
 					for (int k = 0; k < individuals.length; k++) {
@@ -85,7 +79,7 @@ public class Population {
 					}
 				}
 			}
-			bw.close();
+			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -151,11 +145,9 @@ public class Population {
 	 * @param filePath
 	 */
 	public void saveToFile(String filePath) {
-		File file = new File(filePath);
-		FileWriter fw;
 		try {
-			fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+			
 			bw.write(getSize() + "\n");
 			for (int i = 0; i < getSize(); i++) {
 				for (String key : individuals[i].data.keySet()) {
@@ -176,5 +168,4 @@ public class Population {
 	public void sort(){
 		Arrays.sort(individuals);
 	}
-	
 }
