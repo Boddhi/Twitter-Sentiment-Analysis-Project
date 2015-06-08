@@ -1,244 +1,110 @@
 package res;
 
-
-/*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
- 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
-import main.Population;
+import genetics.*;
 
 import java.beans.*;
-import java.util.Random;
- 
-public class DataMiner extends JPanel
-                             implements ActionListener, 
-                                        PropertyChangeListener {
- 
-	static TwitterFeed twitter2;
-    static Population myPop2;
+import java.util.Scanner;
 
-    
-    public int good, bad, neutral;
-    
-    private JProgressBar progressBar;
-    private JButton startButton;
-    public JButton backButton;
-    public Boolean running = false;
-    private JTextArea taskOutput;
-    private Task task;
-    public static JTextField response = new JTextField();
-    
-    
-    
-    Boolean queried = false;
-    Boolean calculated = false;
-    
-    public String[] results;
- 
-    class Task extends SwingWorker<Void, Void> {
-        /*
-         * Main task. Executed in background thread.
-         */
-        @Override
-        public Void doInBackground() {
-        	good = 0;
-        	bad =0;
-        	neutral= 0;
-            Random random = new Random();
-            int progress = 0;
-            //Initialize progress property.
-            setProgress(0);
-            while (progress < 100) {
-                //Sleep for up to one second.
-                try {
-                    Thread.sleep(random.nextInt(500));
-                } catch (InterruptedException ignore) {}
-                if(progress > 50 && !queried){
-                	results = twitter2.seek(GraphicsControl.input.getText());
-                	queried = true;
-                }
-                
-                if(progress > 75 && !calculated){
-                	for(int i = 0; i < results.length; i++){
-                		//System.out.println(results[i]);
-                		if(myPop2.getFittest(0).test(results[i]) > 0) good++;
-                		else if(myPop2.getFittest(0).test(results[i]) < 0) bad++;
-                		else neutral++;
-                	}
-                	calculated = true;
-                }
-                
-                //Make random progress.
-                progress += random.nextInt(10);
-                setProgress(Math.min(progress, 100));
-            }
-            
-            String output = "";
-            if(good > bad){
-            	output+= "POSITIVE";
-        		//if(good > bad+neutral) output+=" : MAJORITY";
-        		//else output+=" : MINORITY ";
-        		response.setForeground(Color.GREEN);
-        	}
-        	else if(bad > good){
-        		output+="NEGATIVE";
-        		//if(good > bad+neutral) output+=" : MAJORITY";
-        		//else output+=" : MINORITY ";
-        		response.setForeground(Color.RED);
-        	}
-        	else{
-        		output+="NEUTRAL";
-        		response.setForeground(Color.BLACK);
-        	}
-            System.out.println(good + " " + bad + " " + neutral);
-            response.setText(output);
-            response.setVisible(true);
-            
-            queried = false;
-            calculated = false;
-            return null;
-        }
- 
-        /*
-         * Executed in event dispatching thread
-         */
-        @Override
-        public void done() {
-            Toolkit.getDefaultToolkit().beep();
-            running = false;
-            startButton.setEnabled(true);
-            //backButton.setEnabled(true);
-            setCursor(null); //turn off the wait cursor
-        }
-    }
- 
-    public DataMiner(JButton backButton, TwitterFeed t, Population pop) {
-        super(new BorderLayout());
- 
-        twitter2 = t;
-        myPop2 = pop;
-        
-        //Create the demo's UI.
-        startButton = new JButton("Start");
-        startButton.setActionCommand("start");
-        startButton.addActionListener(this);
-        
-        progressBar = new JProgressBar(0, 100);
-        progressBar.setValue(0);
-        progressBar.setStringPainted(true);
- 
-        taskOutput = new JTextArea(5, 20);
-        taskOutput.setMargin(new Insets(5,5,5,5));
-        taskOutput.setEditable(false);
-        
-        response.setText("Unkown...");
-        response.setVisible(true);
-        response.setEditable(false);
- 
-        JPanel panel = new JPanel();
-        panel.add(startButton);
-        panel.add(backButton);
-        panel.add(progressBar);
-        panel.add(response);
- 
-        add(panel, BorderLayout.PAGE_START);
-        add(new JScrollPane(taskOutput), BorderLayout.CENTER);
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
- 
-    }
- 
-    /**
-     * Invoked when the user presses the start button.
-     */
-    public void actionPerformed(ActionEvent e) {
-    	if(e.getActionCommand() == "start"){
-    		taskOutput.setText("");
-    		startButton.setEnabled(false);
-    		running = true;
-        	//backButton.setEnabled(false);
-        	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        //Instances of javax.swing.SwingWorker are not reusuable, so
-        //we create new instances as needed.
-        	task = new Task();
-        	task.addPropertyChangeListener(this);
-        	task.execute();
-        	this.repaint();
-        	this.revalidate();
-    	}
-    }
- 
-    /**
-     * Invoked when task's progress property changes.
-     */
-    public void propertyChange(PropertyChangeEvent evt) {
-        if ("progress" == evt.getPropertyName()) {
-            int progress = (Integer) evt.getNewValue();
-            progressBar.setValue(progress);
-            taskOutput.append(String.format(
-                    "Twitter Analysis in progress... %d%% done\n", task.getProgress()));
-        } 
-    }
- 
- 
-    /**
-     * Create the GUI and show it. As with all GUI code, this must run
-     * on the event-dispatching thread.
-     */
-    private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("ProgressBarDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
- 
-        //Create and set up the content pane.
-        JComponent newContentPane = new DataMiner(null, twitter2, myPop2);
-        newContentPane.setOpaque(true); //content panes must be opaque
-        frame.setContentPane(newContentPane);
- 
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
-    }
- 
-    public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
+/**
+ * The DataMiner class. Responsible for performing calculations and analyzing data.
+ * 
+ * @author Tristan Monger
+ * 
+ */
+@SuppressWarnings("serial")
+public class DataMiner extends JPanel implements ActionListener,
+		PropertyChangeListener {
+
+	public static TwitterFeed twitter2;
+	public static Population myPop2;
+
+	public int good, bad, neutral;
+
+	private JProgressBar progressBar;
+	public static JButton startButton;
+	public JButton backButton;
+	public Boolean running = false;
+	private Task task;
+	public static JTextField response = new JTextField();
+
+	public static String[] results;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param backButton the button that exits the DataMiner
+	 * @param t the TwitterFeed to query with
+	 * @param pop the Population to use for twitter analysis
+	 */
+	public DataMiner(JButton backButton, TwitterFeed t, Population pop) {
+		super(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		twitter2 = t;
+		myPop2 = pop;
+
+		startButton = new JButton("Start");
+		startButton.setActionCommand("start");
+		startButton.addActionListener(this);
+
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setValue(0);
+		progressBar.setStringPainted(true);
+
+		response.setText("Unknown...");
+		response.setVisible(true);
+		response.setEditable(false);
+
+		JPanel panel = new JPanel(new GridBagLayout());
+		c.gridx = 0;
+		c.gridy = 0;
+		panel.add(backButton, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		panel.add(startButton, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		panel.add(progressBar, c);
+		c.gridx = 1;
+		c.gridy = 2;
+		panel.add(response, c);
+
+		add(panel);
+	}
+
+	/**
+	 * Invoked when an action occurs.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand() == "start") {
+			startButton.setEnabled(false);
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			task = new Task();
+			task.addPropertyChangeListener(this);
+			task.execute();
+			this.repaint();
+			this.revalidate();
+		}
+	}
+
+	/**
+	 * Acts when the Task progress property changes.
+	 */
+	public void propertyChange(PropertyChangeEvent evt) {
+		if ("progress" == evt.getPropertyName()) {
+			int progress = (Integer) evt.getNewValue();
+			progressBar.setValue(progress);
+			if (task.getProgress() == 100) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				startButton.setEnabled(true);
+				response.setVisible(true);
+			}
+			myPop2 = Algorithm.evolvePopulation(myPop2);
+		}
+	}
 }

@@ -1,0 +1,26 @@
+Listen In!
+Author: Tristan Monger
+
+The prepackaged population is trained to distinguish between positive and negative input. However, the framework can be adapted for any 
+binary (true/false) string-based queries, e.g. Spam detection.
+
+Features:
+The Wilson Score is used to calculate the given success of a word.
+Principles of genetic programming are applied to determine which word-value associations yields the most successful interpretations of input.
+Sarcasm detection is a notable weakness.
+
+Training Instructions:
+The program can be trained from within the GUI (at the "Train" page). However, if larger quantities of data are desired to be inputted, training by file is also possible.
+Simply create an "Update.txt" file of the following format and save it in the same folder as the program file.
+
+Sample Update.txt - integer n, followed by n positive lines, then integer m, followed by m negative lines
+2
+good
+excellent
+2
+bad
+terrible
+
+Notes:
+* With great power comes great responsibility: if you want accurate output, give accurate training input.
+* The Twitter API limits the amount of queries that can be made per minute by a program. If the analysis will not change from neutral, just wait a minute or two.

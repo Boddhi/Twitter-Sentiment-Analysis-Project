@@ -1,24 +1,25 @@
-package main;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+package genetics;
+import java.io.*;
+import java.util.Arrays;
 
+/**
+ * Population class.
+ * 
+ * @author Tristan Monger
+ *
+ */
 public class Population {
 
 	Individual[] individuals;
 
-	/*
-	 * Constructors
+	/**
+	 * Constructor. Builds a population of given size and, if called for, initializes the individuals with a basic string.
+	 * @param populationSize the number of individuals to put in the population
+	 * @param initialize if true - seeds the individuals with a short string
 	 */
-	// Create a population
 	public Population(int populationSize, boolean initialize) {
 		individuals = new Individual[populationSize];
-		// Initialize population
 		if (initialize) {
-			// Loop and create individuals
 			for (int i = 0; i < getSize(); i++) {
 				Individual newIndividual = new Individual();
 				newIndividual.generateIndividual("Hello world! Goodbye world.");
@@ -27,6 +28,10 @@ public class Population {
 		}
 	}
 
+	/**
+	 * Loads an existing population from a text file.
+	 * @param filePath
+	 */
 	public Population(String filePath) {
 		File file = new File(filePath);
 		FileReader fw;
@@ -36,14 +41,12 @@ public class Population {
 			individuals = new Individual[Integer.parseInt(bw.readLine())];
 			for (int i = 0; i < getSize(); i++) {
 				String line = new String(bw.readLine());
-				String[] words = line.split("\\s+");
+				String[] words = line.split("[^a-zA-Z0-9']");
 				Individual newGuy = new Individual();
-				for (int j = 0; j < words.length; j += 2) {
-					newGuy.setGene(words[j], Integer.parseInt(words[j + 1]));
+				for (int j = 0; j < words.length; j += 3) {
+					newGuy.setGene(words[j], new Gene(Integer.parseInt(words[j + 1]),Integer.parseInt(words[j + 2])));
 				}
 				saveIndividual(i, newGuy);
-				// Individual newIndividual = new Individual(line);
-				// saveIndividual(i,newIndividual);
 			}
 			bw.close();
 		} catch (IOException e) {
@@ -51,6 +54,10 @@ public class Population {
 		}
 	}
 
+	/**
+	 * Teaches the population data from a text file.
+	 * @param filePath
+	 */
 	public void feed(String filePath) {
 		File file = new File(filePath);
 		FileReader fw;
@@ -61,30 +68,20 @@ public class Population {
 			len = Integer.parseInt(bw.readLine());
 			for (int i = 0; i < len; i++) {
 				String line = new String(bw.readLine());
-				String[] words = line.split("\\s+");
+				String[] words = line.toLowerCase().split("[^a-zA-Z0-9']");
 				for (int j = 0; j < words.length; j++) {
 					for (int k = 0; k < individuals.length; k++) {
-						if (individuals[k].getGene(words[j]) != 0) {
-							individuals[k].setGene(words[j],
-									individuals[k].getGene(words[j]) + 1);
-						} else {
-							individuals[k].setGene(words[j], 1);
-						}
+						individuals[k].feed(words[j], 1);
 					}
 				}
 			}
 			len = Integer.parseInt(bw.readLine());
 			for (int i = 0; i < len; i++) {
 				String line = new String(bw.readLine());
-				String[] words = line.split("\\s+");
+				String[] words = line.toLowerCase().split("[^a-zA-Z0-9']");
 				for (int j = 0; j < words.length; j++) {
 					for (int k = 0; k < individuals.length; k++) {
-						if (individuals[k].getGene(words[j]) != 0) {
-							individuals[k].setGene(words[j],
-									individuals[k].getGene(words[j]) - 1);
-						} else {
-							individuals[k].setGene(words[j], -1);
-						}
+						individuals[k].feed(words[j], -1);
 					}
 				}
 			}
@@ -94,22 +91,26 @@ public class Population {
 		}
 	}
 
+	/**
+	 * Teaches the population the value to associate with the words of a given String.
+	 * @param input the string to teach
+	 * @param value the value to associate
+	 */
 	public void feed(String input, int value) {
 		String line = new String(input);
-		String[] words = line.split("\\s+");
+		String[] words = line.split("[^a-zA-Z0-9']");
 		for (int j = 0; j < words.length; j++) {
 			for (int k = 0; k < individuals.length; k++) {
-				if (individuals[k].getGene(words[j]) != 0) {
-					individuals[k].setGene(words[j],
-							individuals[k].getGene(words[j]) + value);
-				} else {
-					individuals[k].setGene(words[j], value);
-				}
+				individuals[k].feed(words[j], value);
 			}
 		}
 	}
 
-	/* Getters */
+	/**
+	 * Returns the Individual stored at the given index.
+	 * @param index the index to query
+	 * @return the Individual at the index
+	 */
 	public Individual getIndividual(int index) {
 		return individuals[index];
 	}
@@ -119,28 +120,36 @@ public class Population {
 		return fittest;
 	}
 
+	/**
+	 * Finds the fittest individual in the population.
+	 * @return the fittest individual
+	 */
 	public Individual getFittest() {
-		Individual fittest = individuals[0];
-		// Loop through individuals to find fittest
-		for (int i = 0; i < getSize(); i++) {
-			// if (fittest.getFitness() <= getIndividual(i).getFitness()) {
-			fittest = getIndividual(i);
-			// }
-		}
-		return fittest;
+		Arrays.sort(individuals);
+		return individuals[individuals.length-1];
 	}
 
-	/* Public methods */
-	// Get population size
+	/**
+	 * Returns the number of Individuals in the population.
+	 * @return the population size
+	 */
 	public int getSize() {
 		return individuals.length;
 	}
 
-	// Save individual
+	/**
+	 * Assigns an element of the individuals array to the given individual.
+	 * @param index the index of the element to assign
+	 * @param indiv the value of the individual to store
+	 */
 	public void saveIndividual(int index, Individual indiv) {
 		individuals[index] = indiv;
 	}
 
+	/**
+	 * Saves the population to a text file.
+	 * @param filePath
+	 */
 	public void saveToFile(String filePath) {
 		File file = new File(filePath);
 		FileWriter fw;
@@ -150,8 +159,8 @@ public class Population {
 			bw.write(getSize() + "\n");
 			for (int i = 0; i < getSize(); i++) {
 				for (String key : individuals[i].data.keySet()) {
-					Integer value = individuals[i].getGene(key);
-					bw.write(key + " " + value + " ");
+					if(key.length() < 1) continue;
+					bw.write(key + " " + individuals[i].data.get(key).toString() + " ");
 				}
 				bw.write("\n");
 			}
@@ -161,4 +170,11 @@ public class Population {
 		}
 	}
 
+	/**
+	 * Sorts the array of individuals by fitness.
+	 */
+	public void sort(){
+		Arrays.sort(individuals);
+	}
+	
 }

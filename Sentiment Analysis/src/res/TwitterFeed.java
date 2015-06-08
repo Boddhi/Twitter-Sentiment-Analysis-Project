@@ -1,20 +1,16 @@
 package res;
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
+import twitter4j.*;
+import twitter4j.auth.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+/**
+ * TwitterFeed class. Performs string queries on available tweets. Uses the Twitter4J library.
+ * @author Tristan Monger
+ *
+ */
 public class TwitterFeed {
 	public static String htmlFilePath;
 	public static Twitter twitter;
@@ -23,12 +19,15 @@ public class TwitterFeed {
 	public static String pin;
 	public static ConfigurationBuilder cb = new ConfigurationBuilder();
 	
+	/**
+	 * Constructor.
+	 */
 	public TwitterFeed(){
 		initTwitter();
 	}
 	
 	/**
-	 * Initializes twitter capabilities.
+	 * Initializes twitter capabilities and completes authorization.
 	 */
 	public void initTwitter(){
 		cb.setDebugEnabled(true)
@@ -42,21 +41,24 @@ public class TwitterFeed {
 		twitter = new TwitterFactory(cb.build()).getInstance();
 	}
 	
-	
-	public String[] seek(String queryString){
+	/**
+	 * Returns the <code>n</code> most recent tweets that match the given query.
+	 * @param queryString the keywords to search for
+	 * @param n the number of tweets to retrieve
+	 * @return <code>n</code> recent tweets matching <code>queryString </code>
+	 */
+	public String[] seek(String queryString, int n){
 		Query query = new Query(queryString);
-		int numberOfTweets = 512;
 		long lastID = Long.MAX_VALUE;
 		ArrayList<Status> tweets = new ArrayList<Status>();
-		while (tweets.size() < numberOfTweets) {
-			if (numberOfTweets - tweets.size() > 100)
+		while (tweets.size() < n) {
+			if (n - tweets.size() > 100)
 				query.setCount(100);
 			else
-				query.setCount(numberOfTweets - tweets.size());
+				query.setCount(n - tweets.size());
 			try {
 				QueryResult result = twitter.search(query);
 				tweets.addAll(result.getTweets());
-				System.out.println("Gathered " + tweets.size() + " tweets");
 				if(tweets.size() == 0) break;
 				for (Status t : tweets)
 					if (t.getId() < lastID)
@@ -65,8 +67,8 @@ public class TwitterFeed {
 			}
 
 			catch (TwitterException te) {
-				System.out.println("Couldn't connect: " + te);
 				te.printStackTrace();
+				break;
 			}
 			;
 			query.setMaxId(lastID - 1);
@@ -79,7 +81,6 @@ public class TwitterFeed {
 			if(t.isRetweet()) msg = t.getRetweetedStatus().getText();
 			else msg = t.getText();
 			ans[i] = msg;
-			//System.out.println("@" + t.getUser().getScreenName() + " - " + msg);
 		}
 		
 		return ans;
