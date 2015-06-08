@@ -1,15 +1,10 @@
 package main;
-import java.util.Scanner;
-
 import res.*;
-
 import genetics.*;
 
 public class Main {
 
-	static Boolean load = true;
-	static Boolean save = false;
-	static Scanner s = new Scanner(System.in);
+	final static Boolean load = true;
 	
 	public static void main(String[] args) {	
 		TwitterFeed twitter = new TwitterFeed();		

@@ -5,7 +5,7 @@ The prepackaged population is trained to distinguish between positive and negati
 binary (true/false) string-based queries, e.g. Spam detection.
 
 Features:
-The Wilson Score is used to calculate the given success of a word.
+Wilson Scores are used to calculate the predictive success of a given word.
 Principles of genetic programming are applied to determine which word-value associations yields the most successful interpretations of input.
 Sarcasm detection is a notable weakness.
 
